@@ -42,7 +42,7 @@
                 1. Bootloader area: No Read, No Write, No Execute.
                 2. Application area: Execute/Read allowed, No Write.
     4. Recovery Mechanism
-        * In situations where the application area cannot be executed for various reasons, an automatic firmware upgrade capability should be available for recovery.
+        * In situations where the application area cannot be executed for several reasons, an automatic firmware upgrade capability should be available for recovery.
         * Alternatively, the use of a secondary partition can be employed to ensure that the last successfully executed application is run.
 3.  Usability Improvement
     1. Bootloader and Application Mode Switching
