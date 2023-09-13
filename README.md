@@ -7,7 +7,8 @@
 
 1. Flash Partition
     * The IAP functionality is divided into two parts. The IAP driver code and the user application code for upgrades.
-    * Upon RESET, the device typically boots into the user application area, but it can also boot into the IAP code area upon specific user input.     
+    * Upon RESET, the device typically boots into the user application area, but it can also boot into the IAP code area upon specific user input.
+    ![image](https://github.com/flagbee/fwup/assets/32917812/11e4719b-1a27-4d93-bb01-3395b5b2e697)   
 2. System Configuration
     * Device
         1. The device where firmware upgrades are performed.
