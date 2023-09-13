@@ -78,7 +78,7 @@
 
 ### Implementations
    1. STM32 Project : Bootloader
-   2. STM32 Project - Application
+   2. STM32 Project : Application
    3. Firmware Upgrade Program
 
 ### Miscellaneous
