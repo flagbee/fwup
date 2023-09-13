@@ -77,10 +77,10 @@
     2. Data: Application Firmware
 
 ### Implementations
-    1. STM32 Project : Bootloader
-    2. STM32 Project - Application
-    3. Firmware Upgrade Program
+   1. STM32 Project : Bootloader
+   2. STM32 Project - Application
+   3. Firmware Upgrade Program
 
 ### Miscellaneous
-    1. Memory must be cleared when jumping from the bootloader to the application area.
+   1. Memory must be cleared when jumping from the bootloader to the application area.
   
