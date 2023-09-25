@@ -102,10 +102,15 @@
     2. Data: Application Firmware
 
 ### Implementations
-   1. STM32 Project : Bootloader
-   2. STM32 Project : Application
-   3. CPP library : interfaces
-   4. Windows application : firmware upgrading tool   
+   1. Development environment
+      <p align="center" width="100%">
+       <img width="80%" src="https://github.com/flagbee/fwup/assets/32917812/1653e700-d50d-4c55-83ca-78d8443b16d8">      
+      </p>      
+   2. Deliverable
+       1. STM32 Project : Bootloader
+       2. STM32 Project : Application
+       3. CPP library : interfaces
+       4. Windows application : firmware upgrading tool   
 
 ### Miscellaneous
    1. Memory must be cleared when jumping from the bootloader to the application area.
