@@ -1,3 +1,4 @@
+
 # Practical **Embedded Firmware Upgrade System**
 
 ## Overview
@@ -65,14 +66,14 @@
     1. Bootloader
     2. Supplementing Partition Design
         1. Apart from the bootloader and application areas, there is a need for storage space to hold partition information, log data, serial numbers, and other device-related information.
-        2. (Example Partition Design)
-            1. Device Information Area
-            2. Secondary Application Area: Depending on code size, multiple secondary areas can be created.
+        2. ![FWUP-Partition drawio](https://github.com/flagbee/fwup/assets/32917812/d71cc1e5-c14e-4e16-a47d-b3d4dd54b048)
+            1. Device Information Area : the boot information should be kept such as 'current boot partition', 'latest boot status', ...
+            2. Secondary Application Area : This area can be used for the recovery mechanism and OTA(on the air) upgrading.
 2. System
     1. (System Block Diagram)
 3. Operation Flow
-    1. (Flowchart)
-    2. (Sequence Diagram)
+    1. Boot sequence and firmware upgrading   
+     ![FWUP-Flow-Boot drawio](https://github.com/flagbee/fwup/assets/32917812/c5d9f8e4-2424-4d8a-b02e-a0c35d249431)
 4. Firmware Structure
     1. Header: Version, Information for Secure Boot
     2. Data: Application Firmware
