@@ -2,14 +2,20 @@
 # Practical **Embedded Firmware Upgrade System**
 
 ## Overview
-&emsp;Devices based on embedded software require maintenance in the user's environment. To facilitate this, firmware download functionality is typically supported through a dedicated download device. Additionally, for users without dedicated downloaders and to enhance usability, firmware download functionality through universal interfaces like UART and Ethernet is provided. STM, in its application note, introduces firmware download using universal interfaces as "In-Application Programming (IAP)" and aims to provide requirements and implementation methods, along with examples using the STM32F board.
+&emsp;Devices based on embedded software require maintenance in the user's environment. To facilitate this, firmware download functionality is typically supported through a dedicated download device. Additionally, for users without dedicated downloaders and to enhance usability, firmware download functionality through universal interfaces like UART and Ethernet is provided. STM, in its application note, introduces firmware download using universal interfaces as "In-Application Programming (IAP)" and aims to provide requirements and implementation methods, along with examples using the STM32F board.   
+<p align="center" width="100%">
+    <img width="50%" src="https://github.com/flagbee/fwup/assets/32917812/a9e984f0-4032-481a-8167-c9e6c65761dc"> 
+</p>
+
 
 ## Basic Firmware Upgrade Functionality - IAP Summary
 
 1. Flash Partition
     * The IAP functionality is divided into two parts. The IAP driver code and the user application code for upgrades.
     * Upon RESET, the device typically boots into the user application area, but it can also boot into the IAP code area upon specific user input.
-    ![image](https://github.com/flagbee/fwup/assets/32917812/11e4719b-1a27-4d93-bb01-3395b5b2e697)   
+      <p align="center" width="100%">
+          <img width="80%" src="https://github.com/flagbee/fwup/assets/32917812/11e4719b-1a27-4d93-bb01-3395b5b2e697"> 
+      </p>
 2. System Configuration
     * Device
         1. The device where firmware upgrades are performed.
@@ -66,22 +72,40 @@
     1. Bootloader
     2. Supplementing Partition Design
         1. Apart from the bootloader and application areas, there is a need for storage space to hold partition information, log data, serial numbers, and other device-related information.
-        2. ![FWUP-Partition drawio](https://github.com/flagbee/fwup/assets/32917812/d71cc1e5-c14e-4e16-a47d-b3d4dd54b048)
-            1. Device Information Area : the boot information should be kept such as 'current boot partition', 'latest boot status', ...
-            2. Secondary Application Area : This area can be used for the recovery mechanism and OTA(on the air) upgrading.
+         <p align="center" width="100%">
+          <img width="33%" src="https://github.com/flagbee/fwup/assets/32917812/d71cc1e5-c14e-4e16-a47d-b3d4dd54b048"> 
+         </p>
+        2. Device Information Area : the boot information should be kept such as 'current boot partition', 'latest boot status', ...
+        3. Secondary Application Area : This area can be used for the recovery mechanism.
 2. System
-    1. (System Block Diagram)
-3. Operation Flow
-    1. Boot sequence and firmware upgrading   
-     ![FWUP-Flow-Boot drawio](https://github.com/flagbee/fwup/assets/32917812/c5d9f8e4-2424-4d8a-b02e-a0c35d249431)
-4. Firmware Structure
+    * A firmware upgrade system consists of an embedded system that is the target for the upgrade and a client that requests the upgrade to be performed.
+      <p align="center" width="100%">
+       <img width="80%" src="https://github.com/flagbee/fwup/assets/32917812/37aabcb1-96b9-4129-ae5d-3dc719410040">      
+      </p>       
+    * Components
+        * Embedded system
+            * Boot loader
+            * Application
+            * Interface      
+        * Client
+            * GUI
+            * Interface
+     
+4. Operation Flow
+    1. Upgrading sequence       
+    3. Boot sequence and firmware upgrading(Embedded system) 
+      <p align="center" width="100%">
+       <img width="100%" src="https://github.com/flagbee/fwup/assets/32917812/3a81f034-4aa9-46da-8437-be2bb4dbd21c"> 
+      </p>      
+5. Firmware Structure
     1. Header: Version, Information for Secure Boot
     2. Data: Application Firmware
 
 ### Implementations
    1. STM32 Project : Bootloader
    2. STM32 Project : Application
-   3. Firmware Upgrade Program
+   3. CPP library : interfaces
+   4. Windows application : firmware upgrading tool   
 
 ### Miscellaneous
    1. Memory must be cleared when jumping from the bootloader to the application area.
