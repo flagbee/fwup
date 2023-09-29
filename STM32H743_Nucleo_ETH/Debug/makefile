@@ -9,6 +9,8 @@ RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
+-include YOURS/driver/subdir.mk
+-include YOURS/app/subdir.mk
 -include Middlewares/Third_Party/LwIP/system/OS/subdir.mk
 -include Middlewares/Third_Party/LwIP/src/netif/ppp/subdir.mk
 -include Middlewares/Third_Party/LwIP/src/netif/subdir.mk
@@ -75,8 +77,8 @@ all: main-build
 main-build: STM32H743_Nucleo_ETH.elf secondary-outputs
 
 # Tool invocations
-STM32H743_Nucleo_ETH.elf STM32H743_Nucleo_ETH.map: $(OBJS) $(USER_OBJS) C:\Users\t460s\Documents\GitHub\STM32H7-LwIP-Examples\STM32H743_Nucleo_ETH\STM32H743ZITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "STM32H743_Nucleo_ETH.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m7 -T"C:\Users\t460s\Documents\GitHub\STM32H7-LwIP-Examples\STM32H743_Nucleo_ETH\STM32H743ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM32H743_Nucleo_ETH.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+STM32H743_Nucleo_ETH.elf STM32H743_Nucleo_ETH.map: $(OBJS) $(USER_OBJS) C:\Users\t460s\Documents\GitHub\fwup\STM32H743_Nucleo_ETH\STM32H743ZITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "STM32H743_Nucleo_ETH.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m7 -T"C:\Users\t460s\Documents\GitHub\fwup\STM32H743_Nucleo_ETH\STM32H743ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM32H743_Nucleo_ETH.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
