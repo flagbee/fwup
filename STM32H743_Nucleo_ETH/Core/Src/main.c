@@ -20,6 +20,8 @@
 #include "main.h"
 #include "cmsis_os.h"
 #include "lwip.h"
+#include "app_shell.h"
+#include "drv_uart.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -42,6 +44,7 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+
 
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
@@ -79,9 +82,6 @@ int main(void)
 
   /* USER CODE END 1 */
 
-  /* MPU Configuration--------------------------------------------------------*/
-  MPU_Config();
-
   /* Enable I-Cache---------------------------------------------------------*/
   SCB_EnableICache();
 
@@ -92,6 +92,9 @@ int main(void)
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
+
+  /* MPU Configuration--------------------------------------------------------*/
+  MPU_Config();
 
   /* USER CODE BEGIN Init */
 
@@ -106,6 +109,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+//  MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -223,6 +227,8 @@ void SystemClock_Config(void)
 static void MX_GPIO_Init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
+/* USER CODE BEGIN MX_GPIO_Init_1 */
+/* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOC_CLK_ENABLE();
@@ -255,14 +261,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : STLINK_RX_Pin STLINK_TX_Pin */
-  GPIO_InitStruct.Pin = STLINK_RX_Pin|STLINK_TX_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  GPIO_InitStruct.Alternate = GPIO_AF7_USART3;
-  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
-
   /*Configure GPIO pin : USB_OTG_FS_PWR_EN_Pin */
   GPIO_InitStruct.Pin = USB_OTG_FS_PWR_EN_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -291,6 +289,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
 
+/* USER CODE BEGIN MX_GPIO_Init_2 */
+/* USER CODE END MX_GPIO_Init_2 */
 }
 
 /* USER CODE BEGIN 4 */
@@ -304,6 +304,31 @@ static void MX_GPIO_Init(void)
   * @retval None
   */
 /* USER CODE END Header_StartDefaultTask */
+
+int32_t _sh_uart_recv_cb(uint8_t *p_data, uint32_t size)
+{
+	sh_input(p_data, size);
+	return 0;
+}
+
+int32_t sh_devinit(void)
+{
+	DRV_UART_CONFIG_S uart_config = {
+			.channel = DRV_UART_CH3,
+			.stopbit = DRV_UART_STOPBITS_1,
+			.baudrate = 115200,
+			.recv_func = _sh_uart_recv_cb
+	};
+	drv_uart_init(&uart_config);
+	return 0;
+}
+
+int32_t sh_output(uint8_t *p_bytes, uint32_t size)
+{
+	drv_uart_write_data(DRV_UART_CH3, p_bytes, size);
+	return size;
+}
+
 void StartDefaultTask(void *argument)
 {
   /* init code for LWIP */
@@ -324,6 +349,14 @@ void StartDefaultTask(void *argument)
   IP4_ADDR(&remote_addr, 192, 168, 1, 1);
   lwiperf_start_tcp_client_default(&remote_addr, NULL, NULL);
   UNLOCK_TCPIP_CORE();
+
+  SH_CONFIG _conf = {
+		  .name = "BLD",
+		  .init = sh_devinit,
+		  .output = sh_output,
+  };
+  sh_init(&_conf);
+
   /* Infinite loop */
   for(;;)
   {
