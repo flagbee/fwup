@@ -77,6 +77,7 @@ typedef struct _SH_CONFIG {
 
 void sh_init(SH_CONFIG *p_config);
 void sh_input(uint8_t *p_byte, uint32_t size);
+int32_t sh_wait_for_input(const char *p_chars, uint32_t size, uint32_t timeout_ms);
 
 #endif /* __SHELL_H */
 

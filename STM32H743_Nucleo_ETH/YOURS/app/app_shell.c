@@ -315,24 +315,31 @@ static void _handle_key(SH_INSTANCE_S *p_inst, uint8_t rbyte)
 	}
 }
 
-static void print_prompt(const char *p_name)
+static void linefeed_show_prompt(const char *p_name)
 {
 	PRINTF("\r\n%s> ", p_name);
+	fflush(stdout);
+}
+
+static void return_show_prompt(const char *p_name)
+{
+	PRINTF("\r%s> ", p_name);
 	fflush(stdout);
 }
 
 void sh_put_byte_impl(SH_INSTANCE_S *p_inst, uint8_t rbyte)
 {
 	if(p_inst->cmdlen < SH_MAX_BUFSIZE) {
-
-		PRINTF("%c", rbyte);
-		fflush(stdout);
-
 		if ( KEY_BACKSPACE == rbyte ) {
 			if (0 < p_inst->cmdlen) {
-				TERMINAL_MOVE_LEFT(1);
+				PRINTF("%c", rbyte);
+//				TERMINAL_MOVE_LEFT(1);
 				TERMINAL_CLEAR_END();
+				fflush(stdout);
 				p_inst->cmdlen -= 1;
+			}
+			else{
+				return_show_prompt(p_inst->name);
 			}
 		}
 		else if ( KEY_ENTER == rbyte ) {
@@ -343,9 +350,12 @@ void sh_put_byte_impl(SH_INSTANCE_S *p_inst, uint8_t rbyte)
 			}
 			p_inst->cmdlen = 0;
 			memset(p_inst->cmdbuf, 0x0, SH_MAX_BUFSIZE);
-			print_prompt(p_inst->name);
+			linefeed_show_prompt(p_inst->name);
 		}
 		else {
+			PRINTF("%c", rbyte);
+			fflush(stdout);
+
 			p_inst->cmdbuf[p_inst->cmdlen] = rbyte;
 			p_inst->cmdlen++;
 			_handle_key(p_inst, rbyte);
@@ -426,7 +436,7 @@ void sh_init_impl(SH_INSTANCE_S *p_inst, SH_COMMAND_S * const *p_cmdlist, uint8_
 	TERMINAL_FONT_GREEN();
 	TERMINAL_DISPLAY_CLEAR();
 	TERMINAL_RESET_CURSOR();
-	print_prompt(p_inst->name);
+	linefeed_show_prompt(p_inst->name);
 }
 
 SHELL_CMD(base,	help,	help_help,			NULL,	cli_help);
@@ -453,4 +463,9 @@ void sh_input(uint8_t *p_byte, uint32_t size)
 	for(i=0; i<size; i++){
 		sh_put_byte_impl(&s_inst, p_byte[i]);
 	}
+}
+
+int32_t sh_wait_for_input(const char *p_chars, uint32_t size, uint32_t timeout_ms)
+{
+	return 0;
 }
