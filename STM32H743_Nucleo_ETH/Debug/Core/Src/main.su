@@ -1,8 +1,0 @@
-../Core/Src/main.c:308:9:_sh_uart_recv_cb	8	static
-../Core/Src/main.c:314:9:sh_devinit	24	static
-../Core/Src/main.c:326:9:sh_output	8	static
-../Core/Src/main.c:332:6:StartDefaultTask	40	static
-../Core/Src/main.c:167:6:SystemClock_Config	128	static,ignoring_inline_asm
-../Core/Src/main.c:79:5:main	56	static,ignoring_inline_asm
-../Core/Src/main.c:428:6:HAL_TIM_PeriodElapsedCallback	0	static
-../Core/Src/main.c:445:6:Error_Handler	0	static,ignoring_inline_asm
