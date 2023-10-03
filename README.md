@@ -115,3 +115,4 @@
 ### Miscellaneous
    1. Memory must be cleared when jumping from the bootloader to the application area.
   
+.
