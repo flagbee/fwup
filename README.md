@@ -73,7 +73,7 @@
     2. Supplementing Partition Design
         1. Apart from the bootloader and application areas, there is a need for storage space to hold partition information, log data, serial numbers, and other device-related information.
          <p align="center" width="100%">
-          <img width="33%" src="https://github.com/flagbee/fwup/assets/32917812/d71cc1e5-c14e-4e16-a47d-b3d4dd54b048"> 
+          <img width="33%" src="https://github.com/flagbee/fwup/assets/32917812/54aa0845-6886-47f3-be9b-7616675d1835"> 
          </p>
         2. Device Information Area : the boot information should be kept such as 'current boot partition', 'latest boot status', ...
         3. Secondary Application Area : This area can be used for the recovery mechanism.
