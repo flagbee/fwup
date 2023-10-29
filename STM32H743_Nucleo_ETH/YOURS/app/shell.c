@@ -1,9 +1,9 @@
 
 #include <ctype.h>
+#include <shell.h>
 #include <stdlib.h>
-#include "config.h"
-#include "app_shell.h"
-#include "drv_uart.h"
+#include "global.h"
+#include "shell.h"
 
 static SH_INSTANCE_S s_inst;
 
@@ -136,13 +136,6 @@ uint8_t shell_cmd_clear(void *para, uint8_t len)
 	TERMINAL_DISPLAY_CLEAR();
 
 	return TRUE;
-}
-
-void Delay(__IO uint32_t nCount)
-{
-	for(; nCount != 0; nCount--){
-		asm("nop");
-	}
 }
 
 static void cli_history_add(SH_INSTANCE_S *p_inst, char* buff)
@@ -333,7 +326,6 @@ void sh_put_byte_impl(SH_INSTANCE_S *p_inst, uint8_t rbyte)
 		if ( KEY_BACKSPACE == rbyte ) {
 			if (0 < p_inst->cmdlen) {
 				PRINTF("%c", rbyte);
-//				TERMINAL_MOVE_LEFT(1);
 				TERMINAL_CLEAR_END();
 				fflush(stdout);
 				p_inst->cmdlen -= 1;
@@ -342,7 +334,7 @@ void sh_put_byte_impl(SH_INSTANCE_S *p_inst, uint8_t rbyte)
 				return_show_prompt(p_inst->name);
 			}
 		}
-		else if ( KEY_ENTER == rbyte ) {
+		else if ( KEY_ENTER == rbyte || KEY_ENTER_ALT == rbyte ) {
 			if( 0 == p_inst->cmdlen ){
 			}
 			else{
@@ -439,11 +431,23 @@ void sh_init_impl(SH_INSTANCE_S *p_inst, SH_COMMAND_S * const *p_cmdlist, uint8_
 	linefeed_show_prompt(p_inst->name);
 }
 
+#pragma section("_shell_section$0_start") 
+#pragma section("_shell_section$a_content")
+#pragma section("_shell_section$z_end")
+SHELL_CMD_INIT(base);
 SHELL_CMD(base,	help,	help_help,			NULL,	cli_help);
 SHELL_CMD(base,	cls,	shell_help_clear,	NULL,	shell_cmd_clear);
 
 void sh_init(SH_CONFIG *p_config)
 {
+#if __GNUC__ >= 3
+	SH_COMMAND_S* const* p_start_of_section = (uint8_t *)&__start_shell_base_section;
+	SH_COMMAND_S* const* p_end_of_section = (uint8_t *)&__stop_shell_base_section;
+#else
+	SH_COMMAND_S* const* p_start_of_section = (uint8_t *)&__start_shell_section + 0x108;
+	SH_COMMAND_S* const* p_end_of_section = (uint8_t *)&__stop_shell_section - 0x104;
+#endif
+
 	ASSERT(p_config);
 	memset(&s_inst, 0, sizeof(SH_INSTANCE_S));
 	s_inst.init = p_config->init;
@@ -453,7 +457,8 @@ void sh_init(SH_CONFIG *p_config)
 	if( NULL != s_inst.init ){
 		s_inst.init();
 	}
-	sh_init_impl(&s_inst, &__start_shell_base_section, (&__stop_shell_base_section - &__start_shell_base_section));
+	
+	sh_init_impl(&s_inst, p_start_of_section, (p_end_of_section - p_start_of_section));
 }
 
 void sh_input(uint8_t *p_byte, uint32_t size)

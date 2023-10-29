@@ -17,10 +17,10 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
+#include "shell.h"
 #include "main.h"
 #include "cmsis_os.h"
 #include "lwip.h"
-#include "app_shell.h"
 #include "drv_uart.h"
 
 /* Private includes ----------------------------------------------------------*/

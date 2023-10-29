@@ -9,6 +9,37 @@
 #include <time.h>
 #include <stdbool.h>
 
+#if __GNUC__ >= 3
+# define inline inline __attribute__ ((always_inline))
+# define __pure __attribute__ ((pure))
+# define __const __attribute__ ((const))
+# define __noreturn __attribute__ ((noreturn))
+# define __malloc __attribute__ ((malloc))
+# define __must_check __attribute__ ((warn_unused_result))
+# define __deprecated __attribute__ ((deprecated))
+# define __used __attribute__ ((used))
+# define __unused __attribute__ ((unused))
+# define __packed __attribute__ ((packed))
+# define __weak __attribute__ ((weak))
+# define likely(x) __builtin_expect (!!(x), 1)
+# define unlikely(x) __builtin_expect (!!(x), 0)
+#define PACK( __Declaration__ ) __Declaration__ __attribute__((__packed__))
+#else
+# define inline /* no inline */
+# define __pure /* no pure */
+# define __const /* no const */
+# define __noreturn /* no noreturn */
+# define __malloc /* no malloc */
+# define __must_check /* no warn_unused_result */
+# define __deprecated /* no deprecated */
+# define __used /* no used */
+# define __unused /* no unused */
+# define __packed /* no packed */
+# define likely(x) (x)
+# define unlikely(x) (x)
+#define PACK( __Declaration__ ) __pragma( pack(push, 1) ) __Declaration__ __pragma( pack(pop))
+#endif
+
 #define SGBOOL  bool
 
 #define	IO_HIGH(p,i)		{p->BSRR=i;}
@@ -108,6 +139,7 @@ if (!(val))                                                             \
 #define KEY_RIGHT           "\x1b\x5b\x43"  /* [right] key: 0x1b 0x5b 0x43 */
 #define KEY_LEFT            "\x1b\x5b\x44"  /* [left] key: 0x1b 0x5b 0x44 */
 #define KEY_ENTER           '\r'            /* [enter] key */
+#define KEY_ENTER_ALT       '\n'            /* [enter] key */
 #define KEY_BACKSPACE       '\b'            /* [backspace] key */
 
 #if CLI_PRINTF

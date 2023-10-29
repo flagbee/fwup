@@ -1,8 +1,8 @@
 
 #include <ctype.h>
+#include <shell.h>
 #include <stdlib.h>
 #include "config.h"
-#include "app_shell.h"
 
 const char shell_help_test[] =
 		"[test]\r\n"

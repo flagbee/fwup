@@ -5,33 +5,32 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include "util_queue.h"
+#include "global.h"
 
 #define SH_VERSION	"v1.0"
-#define SYSTEM_REBOOT()     NVIC_SystemReset()
+#define SYSTEM_REBOOT()     
 #define SH_MAX_BUFSIZE 	(512)
 #define SH_HISTORY_MAX	(5)
 #define SH_ARGS_MAX_STR_LEN	(16)
 
-
 typedef int32_t (*init_func)(void);
 typedef int32_t (*output_func)(uint8_t *p_bytes, uint32_t size);
 
-typedef struct {
+typedef PACK(struct _SH_COMMAND_S{
     const char *p_cmd;
     const char *p_help;
     uint8_t (*p_init)(void);
     uint8_t (*p_func)(void *, uint8_t);
-} __packed SH_COMMAND_S;
+}) SH_COMMAND_S;
 
-typedef struct {
+typedef PACK(struct _SH_HISTORY_S{
 	uint8_t	cmd[SH_HISTORY_MAX][SH_MAX_BUFSIZE];
 	uint8_t	count;
 	uint8_t	latest;
 	uint8_t	show;
-} __packed SH_HISTORY_S;
+}) SH_HISTORY_S;
 
-typedef struct {
+typedef PACK(struct _SH_INSTANCE_S{
 	char				name[16];
 	SH_COMMAND_S * const *p_cmdlist;
 	uint8_t				cmdlist_size;
@@ -42,14 +41,23 @@ typedef struct {
 
 	init_func		init;
 	output_func		output;
-} __packed SH_INSTANCE_S;
+}) SH_INSTANCE_S;
 
+#if __GNUC__ >= 3
+#define SHELL_CMD_INIT(_basename) \
+	extern SH_COMMAND_S * const __weak __start_shell_##_basename##_section; \
+	extern SH_COMMAND_S * const __weak __stop_shell_##_basename##_section
 #define SHELL_CMD(_basename, _cmd, _help, _init, _handle) \
-SH_COMMAND_S _basename##_cmd = {#_cmd, _help, _init, _handle}; \
-SH_COMMAND_S * const p##_basename##_cmd __attribute((__section__("shell_"#_basename"_section"))) __attribute((__used__)) = (SH_COMMAND_S *)&_basename##_cmd
-
-extern SH_COMMAND_S * const __attribute__((weak)) __start_shell_base_section;
-extern SH_COMMAND_S * const __attribute__((weak)) __stop_shell_base_section;
+	SH_COMMAND_S _basename##_cmd = {#_cmd, _help, _init, _handle}; \
+	SH_COMMAND_S * const p##_basename##_cmd __attribute((__section__("shell_"#_basename"_section"))) __attribute((__used__)) = (SH_COMMAND_S *)&_basename##_cmd
+#else
+#define SHELL_CMD_INIT(_basename) \
+	__declspec(allocate("_shell_section$0_start")) int __start_shell_section = 0; \
+	__declspec(allocate("_shell_section$z_end")) int __stop_shell_section = 0
+#define SHELL_CMD(_basename, _cmd, _help, _init, _handle) \
+	SH_COMMAND_S _cmd = {#_cmd, _help, _init, _handle}; \
+	__declspec(allocate("_shell_section$a_content")) SH_COMMAND_S * const p##_cmd = (SH_COMMAND_S *)&_cmd
+#endif
 
 typedef struct {
 	uint8_t	type;
